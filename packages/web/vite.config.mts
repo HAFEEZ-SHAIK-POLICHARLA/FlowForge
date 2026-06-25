@@ -11,7 +11,7 @@ import customHtmlPlugin from './vite-plugins/html-plugin';
 export default defineConfig(({ command, mode }) => {
   const isDev = command === 'serve' || mode === 'development';
 
-  const AP_TITLE = 'Activepieces';
+  const AP_TITLE = 'FlowForge';
   const AP_FAVICON = 'https://activepieces.com/favicon.ico';
 
   return {
