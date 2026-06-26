@@ -31,7 +31,7 @@ function SidebarLogoCollapsed({ linkTo }: { linkTo?: string }) {
       <img
         src={branding.logos.logoIconUrl}
         alt={t('home')}
-        className="h-5! w-5! shrink-0"
+        className="h-8! w-8! shrink-0"
         draggable={false}
       />
     </Button>
@@ -57,7 +57,12 @@ export const AppSidebarHeader = () => {
         <div className="w-full flex items-center gap-2">
           <SidebarLogoCollapsed linkTo={defaultRoute} />
           {state !== 'collapsed' && (
-            <h1 className="truncate text-sm font-medium">
+            <h1
+              className="truncate text-xl leading-none"
+              style={{
+                fontFamily: 'Roghin',
+              }}
+            >
               {branding.websiteName}
             </h1>
           )}

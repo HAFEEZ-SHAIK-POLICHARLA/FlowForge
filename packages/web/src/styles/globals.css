@@ -1,3 +1,19 @@
+@font-face {
+    font-family: 'Argenta';
+    src: url('/fonts/Argenta.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roghin';
+    src: url('/fonts/roghin.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 .welcome-gradient {
     background: linear-gradient(
         to bottom right,
