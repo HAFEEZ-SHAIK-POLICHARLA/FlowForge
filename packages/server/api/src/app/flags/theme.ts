@@ -4,7 +4,7 @@ import tinycolor from 'tinycolor2'
 function generateColorVariations(defaultColor: string) {
     const defaultColorObj = tinycolor(defaultColor)
 
-    const darkColor = defaultColorObj.clone().darken(2)
+    const darkColor = defaultColorObj.clone().darken(8)
     const baseLight = tinycolor('#ffffff')
     const lightColor = tinycolor
         .mix(baseLight, defaultColorObj.toHex(), 12)
@@ -73,7 +73,7 @@ export function generateTheme({
 }
 
 export const defaultTheme = generateTheme({
-    primaryColor: '#6e41e2',
+    primaryColor: '#37AE5F',
     websiteName: 'FlowForge',
     fullLogoUrl: '/logo.svg',
     favIconUrl: '/logo.svg',

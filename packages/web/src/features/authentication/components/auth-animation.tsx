@@ -704,7 +704,7 @@ function Scene2({
             }
             label="5. Notify Sales"
             subtitle="Slack"
-            iconBg="bg-purple-50"
+            iconBg="bg-primary/10"
           />
         </div>
 
@@ -714,7 +714,7 @@ function Scene2({
           style={{ left: '230px', top: '265px', width: '160px' }}
         >
           <FlowNode
-            icon={<LoopSvg />}
+            icon={<LoopSvg />} 
             label="6. Nurture Loop"
             subtitle="Loop"
             borderColor="border-pink-200"
