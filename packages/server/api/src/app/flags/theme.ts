@@ -73,7 +73,7 @@ export function generateTheme({
 }
 
 export const defaultTheme = generateTheme({
-    primaryColor: '#37AE5F',
+    primaryColor: '#20B2AA',
     websiteName: 'FlowForge',
     fullLogoUrl: '/logo.svg',
     favIconUrl: '/logo.svg',
