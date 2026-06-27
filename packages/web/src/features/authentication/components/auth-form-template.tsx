@@ -119,11 +119,11 @@ const AuthImage = () => {
 
   return (
     <img
-      src="https://cdn.activepieces.com/assets/auth-bg.webp"
+      src="/auth/flowforge-auth.svg"
       alt=""
       onLoad={onLoad}
       className={cn(
-        'absolute inset-0 w-full h-full object-cover transition-opacity duration-300',
+        'absolute inset-0 w-full h-full object-contain p-10 lg:p-12 transition-opacity duration-300',
         loaded ? 'opacity-100' : 'opacity-0',
       )}
     />
@@ -161,7 +161,7 @@ const AuthLayout = ({
 
       {/* Right side — animation for sign-up, image for sign-in */}
       <div className="hidden lg:flex w-1/2 py-5 pr-5">
-        <div className="relative w-full h-full rounded-2xl overflow-hidden bg-muted">
+        <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white">
           {isSignUp ? <AuthAnimation /> : <AuthImage />}
         </div>
       </div>
