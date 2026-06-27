@@ -82,7 +82,7 @@ export const platformService = (log: FastifyBaseLogger) => ({
         })
         const platform = await this.create({ ownerId: newUser.id, name })
         const defaultProject = await projectService(log).create({
-            displayName: `${name}'s Project`,
+            displayName: `${name}'s Flowspace`,
             ownerId: newUser.id,
             platformId: platform.id,
             type: ProjectType.PERSONAL,
