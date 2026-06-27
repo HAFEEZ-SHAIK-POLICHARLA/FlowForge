@@ -97,7 +97,7 @@ async function migrateProjects(queryRunner: QueryRunner) {
             "showActivityLog")
             VALUES
             ($1, current_timestamp, current_timestamp, $2, 'Activepieces',
-            '#37AE5F', 'https://cdn.activepieces.com/brand/logo.svg',
+            '#20B2AA', 'https://cdn.activepieces.com/brand/logo.svg',
             'https://cdn.activepieces.com/brand/full-logo.png',
             'https://cdn.activepieces.com/brand/favicon.ico', '{}',
             'BLOCKED', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,

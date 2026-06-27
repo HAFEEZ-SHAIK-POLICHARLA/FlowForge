@@ -812,7 +812,7 @@ async function migrateProjects(queryRunner: QueryRunner) {
             current_timestamp,
             '${ownerId}',
             'Activepieces',
-            '#37AE5F',
+            '#20B2AA',
             'https://cdn.activepieces.com/brand/logo.svg',
             'https://cdn.activepieces.com/brand/full-logo.png',
             'https://cdn.activepieces.com/brand/favicon.ico',
