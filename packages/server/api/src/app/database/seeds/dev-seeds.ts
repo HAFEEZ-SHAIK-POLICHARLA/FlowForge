@@ -49,7 +49,7 @@ const seedDevUser = async (): Promise<void> => {
 
     await platformService(log).createPlatformWithProject({
         identityId: response.id,
-        name: 'dev\'s Platform',
+        name: 'FlowForge',
         invalidatePreviousTokens: true,
     })
 
