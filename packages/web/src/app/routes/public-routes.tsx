@@ -58,7 +58,7 @@ export const publicRoutes = [
     path: '/templates',
     element: (
       <ProjectDashboardLayout>
-        <PageTitle title="Templates">
+        <PageTitle title="FlowPlates">
           <SuspenseWrapper>
             <TemplatesPage />
           </SuspenseWrapper>

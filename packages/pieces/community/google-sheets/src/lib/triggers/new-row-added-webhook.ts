@@ -25,7 +25,7 @@ import { areSheetIdsValid,  } from '../common/common';
 export const newRowAddedTrigger = createTrigger({
 	auth: googleSheetsAuth,
 	name: 'googlesheets_new_row_added',
-	displayName: 'New Row Added',
+	displayName: '🔥New Row Added',
 	description: 'Triggers when a new row is added to bottom of a spreadsheet.',
 	aiMetadata: {
 		description:

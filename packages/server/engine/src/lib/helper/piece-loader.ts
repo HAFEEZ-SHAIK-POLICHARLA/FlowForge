@@ -1,5 +1,6 @@
 import fs from 'fs/promises'
 import path from 'path'
+import { pathToFileURL } from 'node:url'
 import { ActivepiecesError, ErrorCode, isNil } from '@activepieces/core-utils'
 import { Action, Piece, PiecePropertyMap, Trigger } from '@activepieces/pieces-framework'
 import { EngineGenericError, extractPieceFromModule, getPackageAliasForPiece, getPieceNameFromAlias, PieceNotFoundError, trimVersionFromAlias } from '@activepieces/shared'
@@ -16,7 +17,7 @@ export const pieceLoader = {
                 devPieces,
             })
             const piecePath = await pieceLoader.getPiecePath({ packageName, devPieces })
-            const module = await import(piecePath)
+            const module = await import(pathToFileURL(piecePath).href)
 
             const piece = extractPieceFromModule<Piece>({
                 module,

@@ -160,7 +160,7 @@ export function ProjectDashboardSidebar({
   const exploreLink: SidebarItemType = {
     type: 'link',
     to: '/templates',
-    label: t('Explore'),
+    label: t('FlowPlates'),
     show: true,
     icon: CompassIcon,
     hasPermission: true,
@@ -218,7 +218,7 @@ export function ProjectDashboardSidebar({
     },
   };
 
-  const items = [chatLink, exploreLink, impactLink, leaderboardLink]
+  const items = [chatLink, exploreLink]
     .filter((item) => item.show !== false)
     .filter(permissionFilter);
 

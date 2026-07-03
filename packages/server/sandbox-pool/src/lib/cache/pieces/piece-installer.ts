@@ -11,8 +11,10 @@ import { cacheUtils } from '../cache-paths'
 const usedPiecesMemoryCache: Record<string, boolean> = {}
 const VALID_SCOPED_NAME_REGEX = /^@[^/]+\/[^/]+$/
 const VALID_UNSCOPED_NAME_REGEX = /^[^/]+$/
-const relativePiecePath = (piece: PiecePackage) => join('./', 'pieces', `${piece.pieceName}-${piece.pieceVersion}`)
-const piecePath = (rootWorkspace: string, piece: PiecePackage) => join(rootWorkspace, 'pieces', `${piece.pieceName}-${piece.pieceVersion}`)
+const relativePiecePath = (piece: PiecePackage) =>
+    path.posix.join('.', 'pieces', `${piece.pieceName}-${piece.pieceVersion}`)
+const piecePath = (rootWorkspace: string, piece: PiecePackage) => 
+    join(rootWorkspace, 'pieces', `${piece.pieceName}-${piece.pieceVersion}`)
 
 export const pieceInstaller = (log: ApLogger, basePath: string, getSettings: () => SandboxPoolSettings) => ({
     async install({ pieces, includeFilters, publicApiUrl, engineToken }: InstallParams): Promise<void> {
@@ -250,6 +252,8 @@ function bundleTgzPath(rootWorkspace: string, piece: PiecePackage): string {
 async function saveBundlesToDiskIfNotCached(rootWorkspace: string, pieces: PiecePackage[], { publicApiUrl, engineToken }: BundleSource): Promise<void> {
     await Promise.all(pieces.map(async (piece) => {
         const bundlePath = bundleTgzPath(rootWorkspace, piece)
+        console.log("=== BUNDLE PATH ===", bundlePath)
+        console.log("=== PIECE ===", piece)
         if (await fileSystemUtils.fileExists(bundlePath)) {
             return
         }
@@ -260,6 +264,7 @@ async function saveBundlesToDiskIfNotCached(rootWorkspace: string, pieces: Piece
         }
         await fileSystemUtils.threadSafeMkdir(dirname(bundlePath))
         await writeFile(bundlePath, Buffer.from(await response.arrayBuffer()))
+        console.log("=== WROTE BUNDLE ===", bundlePath)
     }))
 }
 
