@@ -1,3 +1,4 @@
+import { filterFlowForgePieces } from '../flowforge-piece-denylist'
 import { ActivepiecesError, apId, assertNotNullOrUndefined, ErrorCode, isNil, LocalesEnum, PlatformId } from '@activepieces/core-utils'
 import { PieceMetadata, PieceMetadataModel, PieceMetadataModelSummary, PiecePackageInformation, pieceTranslation } from '@activepieces/pieces-framework'
 import { apVersionUtil } from '@activepieces/server-utils'
@@ -36,7 +37,19 @@ export const pieceMetadataService = (log: FastifyBaseLogger) => {
                 suggestionType: params.suggestionType,
             })
 
-            return toPieceMetadataModelSummary(filteredPieces, translatedPieces, params.suggestionType)
+            const visiblePieces = filterFlowForgePieces(filteredPieces)
+            console.log(
+              '[FlowForge]',
+              filteredPieces.length,
+              '->',
+              visiblePieces.length,
+            );
+
+            console.log(visiblePieces.find((p) => p.name === 'hashi-corp-vault'));
+
+            filteredPieces.filter((p) =>  p.name.includes('vault') ||  p.name.includes('cyber') ||  p.name.includes('azure') ||  p.name.includes('okta'),).forEach((p) => console.log(p.name));
+
+            return toPieceMetadataModelSummary( visiblePieces,translatedPieces,params.suggestionType,);
         },
         async registry(params: RegistryParams): Promise<PiecePackageInformation[]> {
             const registry = filterRegistry(await loadRegistry(log), {

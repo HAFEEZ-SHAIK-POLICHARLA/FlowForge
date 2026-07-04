@@ -1,4 +1,5 @@
 import { LocalesEnum } from '@activepieces/core-utils';
+import { filterFlowForgePieces } from '../flowforge-piece-denylist';
 import {
   PieceMetadataModel,
   PieceMetadataModelSummary,
@@ -181,10 +182,12 @@ export const piecesHooks = {
         : undefined,
     });
     return {
-      pieces: query.data,
-      isLoading: query.isLoading,
-      refetch: query.refetch,
-    };
+    pieces: query.data
+        ? filterFlowForgePieces(query.data)
+        : [],
+    isLoading: query.isLoading,
+    refetch: query.refetch,
+};
   },
   usePiecesSearch: (
     props: UsePiecesSearchProps,

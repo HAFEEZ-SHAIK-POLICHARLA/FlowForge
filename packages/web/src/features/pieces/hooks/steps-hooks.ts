@@ -1,3 +1,4 @@
+import { filterFlowForgePieces } from '../flowforge-piece-denylist';
 import { LocalesEnum, isNil } from '@activepieces/core-utils';
 import {
   FlowAction,
@@ -67,6 +68,7 @@ export const stepsHooks = {
           locale: i18n.language as LocalesEnum,
         });
 
+        const visiblePieces = filterFlowForgePieces(pieces);
         const filteredPiecesBySuggestionType = pieces.filter(
           (piece) =>
             (type === 'action' && piece.actions > 0) ||
