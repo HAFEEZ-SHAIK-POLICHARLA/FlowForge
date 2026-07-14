@@ -91,3 +91,8 @@ deploy/terraform/**/*.tfstate.backup
 deploy/terraform/**/.terraform.lock.hcl
 deploy/terraform/**/terraform.tfvars
 deploy/terraform/**/terraform-*.tfvars
+
+
+# Local development artifacts
+server.log
+temp_gmail/
