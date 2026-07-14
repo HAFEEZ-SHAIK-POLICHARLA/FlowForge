@@ -43,7 +43,7 @@ import { api } from '@/lib/api';
 
 const PlatformPiecesPage = () => {
   const { platform } = platformHooks.useCurrentPlatform();
-  const isEnabled = platform.plan.managePiecesEnabled;
+  const isEnabled = true;
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('name') ?? '';
   const {

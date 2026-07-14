@@ -71,6 +71,27 @@ export const platformOAuth2Service = (log: FastifyBaseLogger) => ({
             clientId: connectionValue.client_id,
             platformId,
         })
+        log.info({
+            connectionClientId: connectionValue.client_id,
+            oauthAppClientId: oauth2App.clientId,
+            hasClientSecret: !!oauth2App.clientSecret,
+        });
+
+
+
+        log.info({
+            tokenUrl: connectionValue.token_url,
+            refreshTokenPresent: !!connectionValue.refresh_token,
+            authMethod: connectionValue.authorization_method,
+        });
+
+        log.info({
+            forwardingConnection: {
+                client_id: connectionValue.client_id,
+                client_secret: oauth2App.clientSecret ? "***present***" : "***missing***",
+            },
+        });
+
         const newValue = await credentialsOauth2Service(log).refresh({
             pieceName,
             projectId,
@@ -78,6 +99,7 @@ export const platformOAuth2Service = (log: FastifyBaseLogger) => ({
             connectionValue: {
                 ...connectionValue,
                 type: AppConnectionType.OAUTH2,
+                client_id: oauth2App.clientId,
                 client_secret: oauth2App.clientSecret,
             },
         })

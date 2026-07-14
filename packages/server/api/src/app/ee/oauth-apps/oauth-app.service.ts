@@ -45,9 +45,18 @@ export const oauthAppService = {
             pieceName,
             clientId,
         })
+        const secret = await encryptUtils.decryptString(oauthApp.clientSecret)
+        console.log("===== OAUTH APP =====")
+        console.log({
+            pieceName,
+            clientId,
+            decryptedSecretPresent: !!secret,
+            secretLength: secret?.length,
+        })
+        console.log("=====================")
         return {
             ...oauthApp,
-            clientSecret: await encryptUtils.decryptString(oauthApp.clientSecret),
+            clientSecret: secret,
         }
     },
     async list({

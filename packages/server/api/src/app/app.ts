@@ -342,6 +342,11 @@ export const setupApp = async (app: FastifyInstance): Promise<FastifyInstance> =
         case ApEdition.COMMUNITY:
             await app.register(platformProjectModule)
             await app.register(communityPiecesModule)
+            await app.register(oauthAppModule)
+
+
+            setPlatformOAuthService(platformOAuth2Service(app.log))
+
             break
     }
 

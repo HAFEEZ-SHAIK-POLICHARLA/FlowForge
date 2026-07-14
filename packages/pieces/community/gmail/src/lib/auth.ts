@@ -82,8 +82,19 @@ export async function createGoogleClient(
       subject: auth.props.userEmail?.trim() || undefined,
     });
   }
+  
   const authClient = new OAuth2Client();
-  authClient.setCredentials(auth);
+
+  authClient.setCredentials({
+    access_token: auth.access_token,
+    refresh_token: auth.refresh_token,
+    token_type: auth.token_type,
+    scope: auth.scope,
+    expiry_date:
+      auth.expires_in && auth.claimed_at
+        ? (auth.claimed_at + auth.expires_in) * 1000
+        : undefined,
+  });
   return authClient;
 }
 

@@ -63,6 +63,7 @@ export const credentialsOauth2Service = (log: FastifyBaseLogger): OAuth2Service<
                     throw new Error(`Unknown authorization method: ${authorizationMethod}`)
             }
             const urlSearchParams = new URLSearchParams(Object.fromEntries(Object.entries(body).map(([key, value]) => [key, String(value)])))
+            
             const response = (
                 await safeHttp.retryingAxios.post(request.tokenUrl, urlSearchParams, {
                     headers,
@@ -115,10 +116,8 @@ export const credentialsOauth2Service = (log: FastifyBaseLogger): OAuth2Service<
         }
         const smService = secretManagersService(log)
         const resolveParams = { platformId, projectIds: projectId ? [projectId] : undefined, throwOnFailure: true }
-        const [client_id, client_secret] = await Promise.all([
-            smService.resolveString({ key: appConnection.client_id, ...resolveParams }),
-            smService.resolveString({ key: appConnection.client_secret, ...resolveParams }),
-        ])
+        const client_id = "730721548771-kvvek2hhut9th4ent3l4obk7flkhveqs.apps.googleusercontent.com";
+        const client_secret = "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";
         const grantType =
             appConnection.grant_type ?? OAuth2GrantType.AUTHORIZATION_CODE   
         const body: Record<string, string> = {}
@@ -163,12 +162,47 @@ export const credentialsOauth2Service = (log: FastifyBaseLogger): OAuth2Service<
             default:
                 throw new Error(`Unknown authorization method: ${authorizationMethod}`)
         }
-        const response = (
-            await safeHttp.retryingAxios.post(appConnection.token_url, new URLSearchParams(body), {
-                headers,
-                timeout: 20000,
-            })
-        ).data
+        log.info({
+            client_id,
+            client_secret: client_secret ? "***present***" : "***missing***",
+            authorizationMethod,
+            grantType,
+            tokenUrl: appConnection.token_url,
+        });
+
+        log.info(body);
+        let response
+
+        try {
+            console.log("========== REFRESH REQUEST ==========");
+            console.log("URL:", appConnection.token_url);
+            console.log("HEADERS:", headers);
+            console.log("BODY STRING:", new URLSearchParams(body).toString());
+            console.log("BODY OBJECT:", body);
+            console.log("====================================");
+            response = (
+                await safeHttp.retryingAxios.post(
+                    appConnection.token_url,
+                    new URLSearchParams(body),
+                    {
+                        headers,
+                        timeout: 20000,
+                    },
+                )
+            ).data
+        } catch (e) {
+            console.error("===== GOOGLE REFRESH FAILED =====")
+
+            if (e instanceof AxiosError) {
+                console.error("Status:", e.response?.status)
+                console.error("Headers:", e.response?.headers)
+                console.error("Body:", e.response?.data)
+            } else {
+                 console.error(e)
+            }
+
+            throw e
+        }
         const mergedObject = mergeNonNull(
             appConnection,
             oauth2Util(log).formatOAuth2Response({ ...response }),

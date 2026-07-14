@@ -76,15 +76,11 @@ export const oauthAppsQueries = {
     return useQuery<PiecesOAuth2AppsMap, Error>({
       queryKey: ['oauth-apps'],
       queryFn: async () => {
-        const apps =
-          edition === ApEdition.COMMUNITY
-            ? {
-                data: [],
-              }
-            : await oauthAppsApi.listPlatformOAuth2Apps({
-                limit: 1000000,
-                cursor: undefined,
-              });
+        const apps = await oauthAppsApi.listPlatformOAuth2Apps({
+          limit: 1000000,
+          cursor: undefined,
+         
+        });
         const cloudApps = !platform.cloudAuthEnabled
           ? {}
           : await oauthAppsApi.listCloudOAuth2Apps(edition!);

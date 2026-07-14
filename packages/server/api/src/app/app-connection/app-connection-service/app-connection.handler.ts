@@ -74,6 +74,7 @@ export const appConnectionHandler = (log: FastifyBaseLogger) => ({
         return connection
     },
 
+
     /**
  * We should make sure this is accessed only once, as a race condition could occur where the token needs to be
  * refreshed and it gets accessed at the same time, which could result in the wrong request saving incorrect data.
