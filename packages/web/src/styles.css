@@ -898,3 +898,7 @@
   0% { transform: scaleY(0.3); opacity: 0.6; }
   100% { transform: scaleY(1); opacity: 1; }
 }
+
+.react-flow__background {
+  filter: drop-shadow(0 0 2px hsl(var(--primary) / 0.35));
+}
