@@ -12,9 +12,7 @@ export const platformApi = {
     return api.post<AuthenticationResponse>('/v1/platforms', { name });
   },
   deleteAccount() {
-    return api.delete<void>(
-      `/v1/platforms/${authenticationSession.getPlatformId()}`,
-    );
+    return api.delete<{ success: boolean }>('/v1/users/me');
   },
   getCurrentPlatform() {
     const platformId = authenticationSession.getPlatformId();

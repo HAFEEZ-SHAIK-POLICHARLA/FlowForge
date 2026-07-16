@@ -24,19 +24,31 @@ export const authenticationService = (log: FastifyBaseLogger) => ({
                 email: params.email,
                 platformId,
             })
-            await authenticationUtils(log).assertUserIsInvitedToPlatformOrProject({
-                email: params.email,
-                platformId,
-            })
+            
+            //public sign-up enabled for FlowForge
+
             const userIdentity = await userIdentityService(log).create({
                 ...params,
-                verified: true,
+                verified:
+                    params.provider === UserIdentityProvider.GOOGLE ||
+                    params.provider === UserIdentityProvider.JWT ||
+                    params.provider === UserIdentityProvider.SAML,
             })
+
             const user = await userService(log).getOrCreateWithProject({
                 identity: userIdentity,
                 platformId,
             })
-            await userInvitationsService(log).provisionUserInvitation({ email: params.email })
+            await userInvitationsService(log).provisionUserInvitation({
+                email: params.email,
+            })
+            
+            await sendVerificationOrAutoVerify(userIdentity, log)
+            if (!userIdentity.verified) {
+                return authenticationUtils(log).getOnboardingResponse({
+                    identityId: userIdentity.id,
+                })
+            }             
 
             log.info({ email: params.email, platform: { id: platformId } }, 'User signed up to existing platform')
             return authenticationUtils(log).getProjectAndToken({
@@ -200,23 +212,20 @@ async function getUserForPlatform(identityId: string, platform: PlatformWithoutS
     return user
 }
 
-async function sendVerificationOrAutoVerify(userIdentity: UserIdentity, log: FastifyBaseLogger): Promise<void> {
-    const edition = system.getEdition()
-    switch (edition) {
-        case ApEdition.CLOUD:
-            if (!userIdentity.verified) {
-                await otpService(log).createAndSend({
-                    platformId: null,
-                    email: userIdentity.email,
-                    type: OtpType.EMAIL_VERIFICATION,
-                })
-            }
-            break
-        case ApEdition.COMMUNITY:
-        case ApEdition.ENTERPRISE:
-            await userIdentityService(log).verify(userIdentity.id)
-            break
+async function sendVerificationOrAutoVerify(
+    userIdentity: UserIdentity,
+    log: FastifyBaseLogger,
+): Promise<void> {
+
+    if (userIdentity.verified) {
+        return
     }
+
+    await otpService(log).createAndSend({
+        platformId: null,
+        email: userIdentity.email,
+        type: OtpType.EMAIL_VERIFICATION,
+    })
 }
 
 async function getPreferredPlatformIdForFederatedAuthn(email: string, log: FastifyBaseLogger): Promise<string | null> {

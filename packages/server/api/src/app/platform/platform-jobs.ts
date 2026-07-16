@@ -46,4 +46,50 @@ export const platformBackgroundJobs = (log: FastifyBaseLogger) => ({
 
         log.info({ platform: { id: platformId } }, '[hardDeletePlatformHandler] Platform deleted')
     },
+    hardDeleteUserHandler: async (data: SystemJobData<SystemJobName.HARD_DELETE_USER>) => {
+        const { platformId, userId, identityId } = data
+
+        const remainingProjects = await projectRepo()
+            .createQueryBuilder('project')
+            .withDeleted()
+            .where({ platformId, ownerId: userId })
+            .getCount()
+
+        if (remainingProjects > 0) {
+            log.info({ 
+                user: { id: userId },
+                remainingProjects,
+            },
+            '[hardDeleteUserHandler] Projects still exist, retrying later',
+            )
+            throw new Error(`User ${userId} still has ${remainingProjects} projects, will retry`)
+        }
+        await transaction(async (entityManager) => {
+            await userRepo(entityManager).delete({
+                id: userId,
+                platformId,
+            })
+        
+
+            const usersUsingIdentity = await userRepo(entityManager).find({
+                where: {
+                    identityId,
+                },
+                withDeleted: true,
+            })
+
+            if (usersUsingIdentity.length === 0) {
+                await userIdentityRepository(entityManager).delete({
+                    id: identityId,
+                })
+            }
+        })
+
+        log.info(
+            { user: { id: userId } },
+            '[hardDeleteUserHandler] User deleted',
+        )
+    },
+
+    
 })

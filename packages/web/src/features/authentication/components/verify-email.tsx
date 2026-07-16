@@ -17,6 +17,7 @@ import { authMutations } from '../hooks/auth-hooks';
 
 const VerifyEmail = () => {
   const [isExpired, setIsExpired] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const otp = searchParams.get('otpcode');
@@ -27,6 +28,11 @@ const VerifyEmail = () => {
 
   const { mutate, isPending } = authMutations.useVerifyEmail({
     onSuccess: ({ email, firstName }) => {
+      console.log("✅ VERIFY SUCCESS CALLBACK");
+
+      setIsVerified(true);
+      console.log("isVerified set to true");
+
       capture({
         name: TelemetryEventName.EMAIL_VERIFICATION_COMPLETED,
         payload: {},
@@ -59,6 +65,8 @@ const VerifyEmail = () => {
   if (!otp || !identityId) {
     return <Navigate to="/sign-in" replace />;
   }
+  console.log({isPending,isVerified,isExpired,
+  });
   return (
     <div className="mx-auto h-screen w-screen flex flex-col items-center justify-center gap-2">
       <FullLogo />
@@ -66,7 +74,7 @@ const VerifyEmail = () => {
       <Card className="w-md rounded-sm drop-shadow-xl p-4">
         <div className="gap-2 w-full flex flex-col">
           <div className="gap-4 w-full flex flex-row items-center justify-center">
-            {!isPending && !isExpired && (
+            {isVerified && !isExpired && (
               <>
                 <MailCheck className="w-16 h-16" />
                 <span className="text-left w-fit">
@@ -76,7 +84,7 @@ const VerifyEmail = () => {
                 </span>
               </>
             )}
-            {isPending && !isExpired && (
+            {isPending && !isExpired && !isVerified &&(
               <>
                 <LoadingSpinner className="size-6" />
                 <span className="text-left w-fit">

@@ -308,6 +308,8 @@ export const setupApp = async (app: FastifyInstance): Promise<FastifyInstance> =
             flagHooks.set(enterpriseFlagsHooks)
             exceptionHandler.initializeSentry(system.get(AppSystemProp.SENTRY_DSN))
             systemJobHandlers.registerJobHandler(SystemJobName.HARD_DELETE_PLATFORM, (data) => platformBackgroundJobs(app.log).hardDeletePlatformHandler(data))
+            systemJobHandlers.registerJobHandler(SystemJobName.HARD_DELETE_USER, (data) => platformBackgroundJobs(app.log).hardDeleteUserHandler(data))
+
             break
         case ApEdition.ENTERPRISE:
             await platformAiCreditsService(app.log).init()
@@ -344,6 +346,9 @@ export const setupApp = async (app: FastifyInstance): Promise<FastifyInstance> =
             await app.register(communityPiecesModule)
             await app.register(oauthAppModule)
 
+            // Email verification
+            await app.register(enterpriseLocalAuthnModule)
+
 
             setPlatformOAuthService(platformOAuth2Service(app.log))
 
@@ -366,6 +371,7 @@ export const setupApp = async (app: FastifyInstance): Promise<FastifyInstance> =
         await engineResponseWatcher(app.log).shutdown()
         await shutdownTelemetry()
     })
+    
 
     return app
 }

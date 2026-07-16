@@ -21,14 +21,11 @@ export const authenticationUtils = (log: FastifyBaseLogger) => ({
             email,
 
         })
-        if (!isInvited) {
-            throw new ActivepiecesError({
-                code: ErrorCode.INVITATION_ONLY_SIGN_UP,
-                params: {
-                    message: 'User is not invited to the platform',
-                },
-            })
-        }
+        // Allow onboarding for users awaiting email verification.
+        // Protected operations are still blocked because sign-in
+        // checks identity.verified separately.
+
+
     },
 
     async getProjectAndToken(params: GetProjectAndTokenParams): Promise<AuthenticationResponse> {
@@ -89,14 +86,8 @@ export const authenticationUtils = (log: FastifyBaseLogger) => ({
 
     async getOnboardingResponse({ identityId }: GetOnboardingResponseParams): Promise<AuthenticationResponse> {
         const identity = await userIdentityService(log).getOneOrFail({ id: identityId })
-        if (!identity.verified) {
-            throw new ActivepiecesError({
-                code: ErrorCode.EMAIL_IS_NOT_VERIFIED,
-                params: {
-                    email: identity.email,
-                },
-            })
-        }
+        // Email verification happens after onboarding.
+        // Do not block onboarding for unverified users.
 
         const token = await accessTokenManager(log).generateToken({
             id: identity.id,

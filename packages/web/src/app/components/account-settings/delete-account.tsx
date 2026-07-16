@@ -48,7 +48,7 @@ export const DeleteAccount = () => {
     !isNil(form.formState.errors.email) ||
     form.getValues('email') !== userEmail;
 
-  if (!isCloudPlanButNotEnterprise(platform.plan.plan) || isNil(userEmail)) {
+  if (isNil(userEmail)) {
     return null;
   }
 

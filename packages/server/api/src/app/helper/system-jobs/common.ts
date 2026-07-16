@@ -12,6 +12,7 @@ export enum SystemJobName {
     DELETE_FLOW = 'delete-flow',
     AI_CREDIT_UPDATE_CHECK = 'ai-credit-update-check',
     HARD_DELETE_PROJECT = 'hard-delete-project',
+    HARD_DELETE_USER = 'hard-delete-user',
     HARD_DELETE_PLATFORM = 'hard-delete-platform',
     FLOW_RUN_TRACKING = 'flow-run-tracking',
     RESUME_DELAY_WAITPOINT = 'resume-delay-waitpoint',
@@ -45,6 +46,12 @@ type HardDeletePlatformSystemJobData = {
     identityId: string
 }
 
+type HardDeleteUserSystemJobData = {
+    platformId: PlatformId
+    userId: UserId
+    identityId: string
+}
+
 type ResumeDelayWaitpointSystemJobData = {
     flowRunId: FlowRunId
     projectId: ProjectId
@@ -61,6 +68,7 @@ type SystemJobDataMap = {
     [SystemJobName.AI_CREDIT_UPDATE_CHECK]: AiCreditUpdateCheckSystemJobData
     [SystemJobName.HARD_DELETE_PROJECT]: HardDeleteProjectSystemJobData
     [SystemJobName.HARD_DELETE_PLATFORM]: HardDeletePlatformSystemJobData
+    [SystemJobName.HARD_DELETE_USER]: HardDeleteUserSystemJobData
     [SystemJobName.FLOW_RUN_TRACKING]: Record<string, never>
     [SystemJobName.RESUME_DELAY_WAITPOINT]: ResumeDelayWaitpointSystemJobData
     [SystemJobName.BUNDLE_PIECE]: BundlePieceSystemJobData
