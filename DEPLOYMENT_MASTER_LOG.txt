@@ -1,0 +1,556 @@
+===============================================================================
+FLOWFORGE
+Deployment Master Log
+Version: 1.0
+Status: Phase 0 (Audit)
+Last Updated: After Step 0.4
+===============================================================================
+
+
+===============================================================================
+PROJECT OBJECTIVE
+===============================================================================
+
+Deploy FlowForge (customized Activepieces fork) as a production-grade SaaS using
+completely cloud-hosted infrastructure.
+
+Target Infrastructure
+
+Frontend
+    Vercel
+
+Backend API
+    Render
+
+Worker
+    Render
+
+Database
+    Supabase PostgreSQL
+
+Redis
+    Upstash Redis
+
+SMTP
+    Gmail SMTP
+
+Authentication
+    Google OAuth + Email Login
+
+Target Scale
+
+- 50 Users
+- ~150 workflow executions/day
+- Free-tier infrastructure wherever possible
+
+
+===============================================================================
+ENGINEERING METHODOLOGY
+===============================================================================
+
+Every implementation phase MUST follow this exact lifecycle.
+
+1. Inspect
+    Understand current implementation.
+
+2. Analyze
+    Determine how the feature currently works.
+
+3. Identify Dependencies
+    Find all affected files, services, APIs,
+    environment variables and related systems.
+
+4. Identify Rollback Strategy
+    Decide how to safely undo the change.
+
+5. Implement
+    Make the smallest well-scoped change.
+
+6. Verify
+    Test the feature.
+    Confirm no regressions.
+
+7. Commit
+    Create a Git checkpoint before proceeding.
+
+
+NO PHASE MAY SKIP THESE STEPS.
+
+
+===============================================================================
+PROJECT STATUS
+===============================================================================
+
+Current Phase
+
+Phase 0
+Deployment Readiness Audit
+
+Status
+
+Step 0.1 ✅ Complete
+Step 0.2 ✅ Complete
+Step 0.3 ✅ Complete
+Step 0.4 ✅ Complete
+Step 0.5 ⬜ Pending
+
+
+===============================================================================
+AUDIT RESULTS
+===============================================================================
+
+----------------------------------------------------------------------------
+Step 0.1
+Repository & Infrastructure Inventory
+----------------------------------------------------------------------------
+
+Result
+
+PASS
+
+Findings
+
+✔ Dedicated development branch
+
+    flowforge-branding
+
+✔ Bun package manager
+
+✔ TurboRepo monorepo
+
+✔ Multi-service architecture
+
+    Frontend
+    API
+    Worker
+    Engine
+
+✔ Docker development environment
+
+✔ PostgreSQL support already included
+
+Deferred
+
+Change Git remote to FlowForge repository
+during Phase 1.
+
+
+----------------------------------------------------------------------------
+Step 0.2
+Environment Audit
+----------------------------------------------------------------------------
+
+Result
+
+PASS
+
+Findings
+
+✔ Runtime configuration driven through environment variables.
+
+No deployment blockers found.
+
+Primary environment variables
+
+AP_FRONTEND_URL
+
+AP_WEBHOOK_URL
+
+AP_DB_TYPE
+
+AP_ENVIRONMENT
+
+Localhost references were found only in
+
+- docs
+- tests
+- examples
+- development files
+
+No runtime hardcoded localhost URLs were found.
+
+Deferred inspections
+
+domain-helper.ts
+
+worker-socket.ts
+
+
+----------------------------------------------------------------------------
+Step 0.3
+Database Audit
+----------------------------------------------------------------------------
+
+Result
+
+PASS
+
+Findings
+
+Database implementation already supports
+
+PGLITE
+
+POSTGRES
+
+Database selection performed via
+
+AP_DB_TYPE
+
+Dedicated connection implementations exist
+
+pglite-connection.ts
+
+postgres-connection.ts
+
+sqlite-connection.ts
+
+No evidence of hardcoded database backend.
+
+Migration to Supabase expected to require
+configuration rather than source code changes.
+
+
+----------------------------------------------------------------------------
+Step 0.4
+Build & Runtime Audit
+----------------------------------------------------------------------------
+
+Result
+
+PASS
+
+Findings
+
+Production build determined by
+
+NODE_ENV
+
+Runtime mode determined by
+
+AP_ENVIRONMENT
+
+No hidden development-only execution paths found.
+
+Public URL generation centralized through
+
+domain-helper.ts
+
+This affects
+
+OAuth
+
+Emails
+
+Invitations
+
+Webhook URLs
+
+Run URLs
+
+Flow URLs
+
+Worker URLs
+
+This significantly reduces deployment risk.
+
+
+===============================================================================
+CURRENT RISK MATRIX
+===============================================================================
+
+Infrastructure
+
+LOW
+
+Runtime
+
+LOW
+
+Frontend
+
+LOW
+
+Backend
+
+LOW
+
+Database Migration
+
+LOW-MEDIUM
+
+Worker Deployment
+
+MEDIUM
+
+OAuth Configuration
+
+MEDIUM
+
+SMTP Configuration
+
+MEDIUM
+
+Branding
+
+LOW
+
+
+===============================================================================
+DEFERRED INSPECTION SCHEDULE
+===============================================================================
+
+Phase 1
+
+Repository ownership
+
+- Create FlowForge GitHub repository
+- Change Git remote
+
+--------------------------------------------------
+
+Phase 2
+
+Database migration
+
+Inspect
+
+database selector
+
+Verify
+
+Supabase migration
+
+Verify
+
+TypeORM migrations
+
+--------------------------------------------------
+
+Phase 3
+
+Backend deployment
+
+Inspect
+
+docker-entrypoint.sh
+
+Document
+
+Render startup process
+
+--------------------------------------------------
+
+Phase 4
+
+Worker deployment
+
+Inspect
+
+worker-socket.ts
+
+Verify
+
+Worker <-> API communication
+
+Verify
+
+Job execution
+
+--------------------------------------------------
+
+Phase 5
+
+Public URL validation
+
+MANDATORY GO-LIVE GATE
+
+Inspect
+
+domain-helper.ts
+
+Verify
+
+OAuth redirects
+
+Invitation emails
+
+Password reset links
+
+Webhook URLs
+
+Run URLs
+
+Flow URLs
+
+Public URL generation
+
+--------------------------------------------------
+
+Phase 6
+
+Authentication & Integrations
+
+Verify
+
+Google OAuth
+
+SMTP
+
+External integrations
+
+Webhook callbacks
+
+--------------------------------------------------
+
+Phase 7
+
+Final Branding
+
+Remaining Activepieces branding
+
+Browser metadata
+
+OpenGraph
+
+Favicon
+
+Email branding
+
+Documentation links
+
+Pricing links
+
+
+===============================================================================
+KNOWN DEPLOYMENT ORDER
+===============================================================================
+
+Phase 0
+
+Audit
+
+↓
+
+Phase 1
+
+Repository
+Cloud Accounts
+Secrets
+
+↓
+
+Phase 2
+
+Supabase Migration
+
+↓
+
+Phase 3
+
+Backend Deployment
+
+↓
+
+Phase 4
+
+Worker Deployment
+
+↓
+
+Phase 5
+
+Frontend Deployment
+
+↓
+
+Phase 6
+
+Authentication
+
+↓
+
+Phase 7
+
+Branding
+
+↓
+
+Production Testing
+
+↓
+
+Public Launch
+
+
+===============================================================================
+GO / NO-GO CRITERIA
+===============================================================================
+
+Deployment may proceed only if all conditions below are satisfied.
+
+Repository
+
+☐ Owned by FlowForge
+
+Database
+
+☐ Running on Supabase
+
+Backend
+
+☐ Running on Render
+
+Worker
+
+☐ Running on Render
+
+Redis
+
+☐ Running on Upstash
+
+Frontend
+
+☐ Running on Vercel
+
+Authentication
+
+☐ Google OAuth working
+
+SMTP
+
+☐ Emails successfully delivered
+
+Workers
+
+☐ Jobs execute successfully
+
+Webhooks
+
+☐ Public webhook URLs functional
+
+Branding
+
+☐ No visible Activepieces branding remaining
+
+URLs
+
+☐ All generated URLs validated
+
+Smoke Test
+
+☐ Complete end-to-end workflow execution
+
+
+===============================================================================
+NOTES
+===============================================================================
+
+This document is the authoritative deployment reference.
+
+Every deployment phase must begin by reviewing this file.
+
+Every completed phase must update this document.
+
+No deployment decisions should rely on memory alone.
+All major findings, risks, and deferred inspections belong here.

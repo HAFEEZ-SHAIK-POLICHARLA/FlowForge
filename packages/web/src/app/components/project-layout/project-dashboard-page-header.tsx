@@ -158,17 +158,7 @@ export const ProjectDashboardPageHeader = ({
           <span className="text-sm font-medium">{t('Add Members')}</span>
         </AnimatedIconButton>
       )}
-      <AnimatedIconButton
-        icon={SettingsIcon}
-        iconSize={16}
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8"
-        onClick={() => {
-          setSettingsInitialTab(getFirstAvailableTab());
-          setSettingsOpen(true);
-        }}
-      />
+      {/* FlowForge: Project settings temporarily hidden */}
     </div>
   ) : (
     children

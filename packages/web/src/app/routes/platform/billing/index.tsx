@@ -76,7 +76,7 @@ function BillingPageDetails() {
     <CenteredPage
       title={t('Billing')}
       description={t(
-        'For questions about billing contact us at support@activepieces.com',
+        'For billing questions, contact your FlowForge administrator.',
       )}
     >
       <div className="flex flex-col gap-6">
