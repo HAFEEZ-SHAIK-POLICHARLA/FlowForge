@@ -1,34 +1,26 @@
 import { readFile } from 'node:fs/promises'
 import { ActivepiecesError, ErrorCode, isNil } from '@activepieces/core-utils'
 import { ApEdition, ApEnvironment, PlatformWithoutFederatedAuth } from '@activepieces/shared'
+import axios from 'axios'
 import { FastifyBaseLogger } from 'fastify'
 import Mustache from 'mustache'
-import nodemailer, { Transporter } from 'nodemailer'
 import { defaultTheme } from '../../../../flags/theme'
 import { system } from '../../../../helper/system/system'
 import { AppSystemProp } from '../../../../helper/system/system-props'
 import { platformService } from '../../../../platform/platform.service'
 import { EmailSender, EmailTemplateData } from './email-sender'
 
-export type SMTPEmailSender = EmailSender & {
-    validateOrThrow(): Promise<void>
-    isSmtpConfigured(): boolean
-}
-
-export const smtpEmailSender = (log: FastifyBaseLogger): SMTPEmailSender => {
+const smtpEmailSender = (log: FastifyBaseLogger): SMTPEmailSender => {
     return {
         async validateOrThrow() {
             if (system.getOrThrow(AppSystemProp.ENVIRONMENT) !== ApEnvironment.PRODUCTION) {
                 return
             }
-            const smtpClient = initSmtpClient()
-            try {
-                await smtpClient.verify()
-            }
-            catch (e) {
+            const brevoApiKey = system.get(AppSystemProp.BREVO_API_KEY)
+            if (isNil(brevoApiKey)) {
                 throw new ActivepiecesError({
                     code: ErrorCode.INVALID_SMTP_CREDENTIALS,
-                    params: { message: String(e) },
+                    params: { message: 'Brevo API key is missing' },
                 })
             }
         },
@@ -39,8 +31,9 @@ export const smtpEmailSender = (log: FastifyBaseLogger): SMTPEmailSender => {
                 const senderName = system.get(AppSystemProp.SMTP_SENDER_NAME)
                 const senderEmail = system.get(AppSystemProp.SMTP_SENDER_EMAIL)
     
-                if (!smtpEmailSender(log).isSmtpConfigured()) {
-                    log.error({ emailSubject }, '[smtpEmailSender#send] SMTP is not configured')
+                const apiKey = system.get(AppSystemProp.BREVO_API_KEY)
+                if (isNil(apiKey)) {
+                    log.error({ emailSubject }, '[smtpEmailSender#send] Brevo API is not configured')
                     return
                 }
     
@@ -49,34 +42,42 @@ export const smtpEmailSender = (log: FastifyBaseLogger): SMTPEmailSender => {
                     templateData,
                 })
     
-                const smtpClient = initSmtpClient()
                 log.info({
                     emails,
                     platform: { id: platformId },
                     templateData,
                 }, '[smtpEmailSender#send] sending email')
-                await smtpClient.sendMail({
-                    from: `${senderName} <${senderEmail}>`,
-                    to: emails.join(','),
+
+                await axios.post('https://api.brevo.com/v3/smtp/email', {
+                    sender: {
+                        name: senderName,
+                        email: senderEmail,
+                    },
+                    to: emails.map(email => ({ email })),
                     subject: emailSubject,
-                    html: emailBody,
+                    htmlContent: emailBody,
+                }, {
+                    headers: {
+                        'api-key': apiKey,
+                        'content-type': 'application/json',
+                        'accept': 'application/json',
+                    },
                 })
             }
             catch (e) {
                 log.error({
                     error: e,
+                    brevo: axios.isAxiosError(e) ? e.response?.data : undefined,
                     emails,
                     platform: { id: platformId },
                     title: templateData.name,
                 }, '[smtpEmailSender#send] error sending email')
                 throw e
             }
-          
         },
 
         isSmtpConfigured(): boolean {
-            return [AppSystemProp.SMTP_HOST, AppSystemProp.SMTP_PORT, AppSystemProp.SMTP_USERNAME, AppSystemProp.SMTP_PASSWORD]
-                .every(prop => !isNil(system.get(prop)))
+            return !isNil(system.get(AppSystemProp.BREVO_API_KEY))
         },
     }
 }
@@ -110,19 +111,6 @@ const renderEmailBody = async ({ platform, templateData }: RenderEmailBodyArgs):
     )
 }
 
-const initSmtpClient = (): Transporter => {
-    const smtpPort = Number.parseInt(system.getOrThrow(AppSystemProp.SMTP_PORT))
-    return nodemailer.createTransport({
-        host: system.getOrThrow(AppSystemProp.SMTP_HOST),
-        port: smtpPort,
-        secure: smtpPort === 465,
-        auth: {
-            user: system.getOrThrow(AppSystemProp.SMTP_USERNAME),
-            pass: system.getOrThrow(AppSystemProp.SMTP_PASSWORD),
-        },
-    })
-}
-
 const getEmailSubject = (templateName: EmailTemplateData['name'], vars: Record<string, string>): string => {
     const templateToSubject: Record<EmailTemplateData['name'], string> = {
         'invitation-email': `You have been invited to "${vars.projectName}" project ✉️`,
@@ -150,6 +138,13 @@ const hexToLightTint = ({ hex, opacity }: { hex: string, opacity: number }): str
     const b = Math.round(255 - (255 - parseInt(raw.substring(4, 6), 16)) * opacity)
     return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
 }
+
+export type SMTPEmailSender = EmailSender & {
+    validateOrThrow(): Promise<void>
+    isSmtpConfigured(): boolean
+}
+
+export { smtpEmailSender }
 
 type RenderEmailBodyArgs = {
     platform: PlatformWithoutFederatedAuth | null
