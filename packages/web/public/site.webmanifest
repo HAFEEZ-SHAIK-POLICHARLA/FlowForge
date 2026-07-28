@@ -1,0 +1,31 @@
+{
+  "name": "FlowForge",
+  "short_name": "FlowForge",
+  "description": "FlowForge is an open-source workflow automation platform that enables teams to build, automate, and scale workflows with an intuitive visual editor.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#10B981",
+  "orientation": "portrait-primary",
+  "lang": "en",
+  "categories": [
+    "productivity",
+    "developer",
+    "business"
+  ],
+  "icons": [
+    {
+      "src": "/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
