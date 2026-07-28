@@ -12,7 +12,7 @@ export default defineConfig(({ command, mode }) => {
   const isDev = command === 'serve' || mode === 'development';
 
   const AP_TITLE = 'FlowForge';
-  const AP_FAVICON = 'https://activepieces.com/favicon.ico';
+  const AP_FAVICON = '/favicon.ico';
 
   return {
     root: __dirname,
