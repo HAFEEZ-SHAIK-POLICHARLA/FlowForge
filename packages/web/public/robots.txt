@@ -1,0 +1,8 @@
+# FlowForge Robots.txt
+
+User-agent: *
+Allow: /
+
+Disallow:
+
+Sitemap: https://flowforge.app/sitemap.xml
