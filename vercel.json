@@ -1,40 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://flowforge-g2me.onrender.com/api/:path*"
-    },
-    {
-      "source": "/ingest/:path*",
-      "destination": "https://flowforge-g2me.onrender.com/ingest/:path*"
-    },
-    {
-      "source": "/register",
-      "destination": "https://flowforge-g2me.onrender.com/register"
-    },
-    {
-      "source": "/authorize",
-      "destination": "https://flowforge-g2me.onrender.com/authorize"
-    },
-    {
-      "source": "/token",
-      "destination": "https://flowforge-g2me.onrender.com/token"
-    },
-    {
-      "source": "/revoke",
-      "destination": "https://flowforge-g2me.onrender.com/revoke"
-    },
-    {
-      "source": "/.well-known/:path*",
-      "destination": "https://flowforge-g2me.onrender.com/.well-known/:path*"
-    },
-    {
-      "source": "/mcp/:path*",
-      "destination": "https://flowforge-g2me.onrender.com/mcp/:path*"
-    },
-    {
-      "source": "/api/socket.io/:path*",
-      "destination": "https://flowforge-g2me.onrender.com/api/socket.io/:path*"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
