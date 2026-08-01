@@ -35,6 +35,10 @@
     {
       "source": "/api/socket.io/:path*",
       "destination": "https://flowforge-g2me.onrender.com/api/socket.io/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
     }
   ]
 }
