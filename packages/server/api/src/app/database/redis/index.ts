@@ -4,7 +4,6 @@ import Redis from 'ioredis'
 import { system } from '../../helper/system/system'
 import { AppSystemProp } from '../../helper/system/system-props'
 import { createDefaultRedisConnection } from './default-redis'
-import { createMemoryRedisConnection } from './memory-redis'
 import { createSentinelRedisConnection } from './sentinel-redis'
 import { RedisConnectionSettings, RedisType } from './types'
 
@@ -36,7 +35,9 @@ export const redisConnections = {
         const settings = getSettings()
         switch (settings.REDIS_TYPE) {
             case RedisType.MEMORY:
-                return createMemoryRedisConnection()
+                throw new Error(
+                    'Memory Redis is not supported in this deployment. Configure REDIS_URL for Upstash.'
+                )
             case RedisType.SENTINEL:
                 return createSentinelRedisConnection(settings)
             default:
