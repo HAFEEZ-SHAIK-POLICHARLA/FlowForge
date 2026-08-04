@@ -129,7 +129,7 @@ COPY --from=build /usr/src/app/dist/packages/engine/ ./dist/packages/engine/
 
 # Regenerate lockfile and install production dependencies (pieces were trimmed from workspace)
 RUN --mount=type=cache,target=/root/.bun/install/cache \
-    bun install --production
+    bun install --production --no-frozen-lockfile
 
 # Copy frontend files
 COPY --from=build /usr/src/app/dist/packages/web ./dist/packages/web/
