@@ -23,7 +23,7 @@ export const pieceSyncService = (log: FastifyBaseLogger) => ({
         systemJobHandlers.registerJobHandler(SystemJobName.PIECES_SYNC, async function syncPiecesJobHandler(): Promise<void> {
             await pieceSyncService(log).sync({ publishCacheRefresh: true })
         })
-        rejectedPromiseHandler(pieceSyncService(log).sync({ publishCacheRefresh: false }), log)
+        //rejectedPromiseHandler(pieceSyncService(log).sync({ publishCacheRefresh: false }), log)
         await systemJobsSchedule(log).upsertJob({
             job: {
                 name: SystemJobName.PIECES_SYNC,
